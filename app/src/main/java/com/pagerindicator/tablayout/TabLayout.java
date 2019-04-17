@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -36,7 +37,7 @@ public class TabLayout extends HorizontalScrollView {
     private ViewPager mViewPager;
     private TabLayoutOnPageChangeListener onPageChangeListener;
 
-    private int mode;
+    private int mode = MODE_SCROLLABLE;
     private int tabMargin;
 
 
@@ -119,7 +120,16 @@ public class TabLayout extends HorizontalScrollView {
         tabWidth = MeasureSpec.getSize(widthMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        if (getChildCount() > 0) {
+            View child = getChildAt(0);
+            if (child.getMeasuredWidth() != getMeasuredWidth() && mode == MODE_FIXED) {
+                int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, getPaddingTop() + getPaddingBottom(), child.getLayoutParams().height);
+                int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.EXACTLY);
+                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            }
+        }
     }
+
 
     public ITabIndicator getIndicator() {
         return mIndicator;
@@ -151,7 +161,6 @@ public class TabLayout extends HorizontalScrollView {
     private void populate() {
         if (mTabContainer != null) {
             mTabContainer.removeAllViews();
-
             //添加title
             int count = adapter.getCount();
             LinearLayout.LayoutParams tabParams;
@@ -159,8 +168,8 @@ public class TabLayout extends HorizontalScrollView {
                 ITabView view = adapter.getTabView(getContext(), i);
                 if (view instanceof View) {
                     if (mode == MODE_FIXED) {
-                        int itemWidth = tabWidth / count;
-                        tabParams = new LinearLayout.LayoutParams(itemWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        tabParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        tabParams.weight = 1;
                         tabParams.gravity = Gravity.CENTER_VERTICAL;
                     } else {
                         tabParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -191,7 +200,39 @@ public class TabLayout extends HorizontalScrollView {
 
     public void setMode(int mode) {
         this.mode = mode;
-        notifyDataSetChanged();
+        applyMode();
+    }
+
+    private void applyMode() {
+        switch (mode) {
+            case MODE_FIXED:
+                mTabContainer.setGravity(Gravity.CENTER_HORIZONTAL);
+                break;
+            case MODE_SCROLLABLE:
+                mTabContainer.setGravity(GravityCompat.START);
+                break;
+        }
+        updateTabViews(true);
+    }
+
+    void updateTabViews(final boolean requestLayout) {
+        for (int i = 0; i < mTabContainer.getChildCount(); i++) {
+            View child = mTabContainer.getChildAt(i);
+            updateTabViewLayoutParams((LinearLayout.LayoutParams) child.getLayoutParams());
+            if (requestLayout) {
+                child.requestLayout();
+            }
+        }
+    }
+
+    private void updateTabViewLayoutParams(LinearLayout.LayoutParams lp) {
+        if (mode == MODE_FIXED) {
+            lp.width = 0;
+            lp.weight = 1;
+        } else {
+            lp.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+            lp.weight = 0;
+        }
     }
 
     class TabLayoutOnPageChangeListener implements ViewPager.OnPageChangeListener {
