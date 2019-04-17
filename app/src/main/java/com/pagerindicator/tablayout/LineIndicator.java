@@ -9,10 +9,13 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+
+import com.pagerindicator.R;
 
 /**
  * Author: tone
@@ -33,7 +36,7 @@ public class LineIndicator extends View implements ITabIndicator {
     private int widthMode;
 
     // 控制动画
-    private Interpolator mStartInterpolator = new AccelerateInterpolator(2f);
+    private Interpolator mStartInterpolator = new AccelerateInterpolator(3f);
     private Interpolator mEndInterpolator = new DecelerateInterpolator(3f);
 
     private float mIndicatorHeight;
@@ -57,7 +60,14 @@ public class LineIndicator extends View implements ITabIndicator {
 
     public LineIndicator(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        colors = new int[]{Color.parseColor("#FFFF6447"), Color.parseColor("#FFFF2B67")};
+
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorAccent, typedValue, true);
+        int colorAccent = typedValue.data;
+        if (colorAccent != 0) {
+            colors = new int[]{colorAccent};
+        } else
+            colors = new int[]{Color.parseColor("#FFFF6447"), Color.parseColor("#FFFF2B67")};
         widthMode = WIDTH_MODE_WRAP;
         mIndicatorHeight = dpToPx(4);
         mIndicatorWidth = dpToPx(24);

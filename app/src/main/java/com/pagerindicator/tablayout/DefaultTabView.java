@@ -6,7 +6,10 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
+
+import com.pagerindicator.R;
 
 /**
  * Author: tone
@@ -35,7 +38,12 @@ public class DefaultTabView extends AppCompatTextView implements ITabView {
         int padding = (int) (getResources().getDisplayMetrics().density * 6);
         setPadding(padding * 3, padding, padding * 3, padding);
 
-        mSelectedColor = Color.WHITE;
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorAccent, typedValue, true);
+        int colorAccent = typedValue.data;
+
+
+        mSelectedColor = colorAccent;
         mNormalColor = Color.BLACK;
     }
 

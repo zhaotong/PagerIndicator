@@ -1,6 +1,7 @@
 package com.pagerindicator;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pagerindicator.tablayout.ArgbEvaluator;
+import com.pagerindicator.tablayout.DefaultTabView;
+import com.pagerindicator.tablayout.ITabIndicator;
+import com.pagerindicator.tablayout.ITabView;
+import com.pagerindicator.tablayout.IconTabView;
+import com.pagerindicator.tablayout.LineIndicator;
+import com.pagerindicator.tablayout.TabAdapter;
 import com.pagerindicator.tablayout.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -84,6 +91,33 @@ public class MainActivity extends AppCompatActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
 
+        tabLayout.setAdapter(new TabAdapter() {
+            @Override
+            public int getCount() {
+                return mPagerAdapter != null ? mPagerAdapter.getCount() : 0;
+            }
+
+            @Override
+            public ITabView getTabView(Context context, int index) {
+                DefaultTabView tabView = new DefaultTabView(context);
+                tabView.setText(mPagerAdapter.getPageTitle(index));
+                return tabView;
+            }
+
+            @Override
+            public ITabIndicator getIndicator(Context context) {
+                LineIndicator indicator=new LineIndicator(context);
+
+
+
+                indicator.setWidthMode(LineIndicator.WIDTH_MODE_CUSTOM);
+                indicator.setIndicatorWidth(dpToPx(18));
+
+
+                return indicator;
+            }
+        });
+
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,5 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private int dpToPx(int dps) {
+        return Math.round(getResources().getDisplayMetrics().density * dps);
     }
 }

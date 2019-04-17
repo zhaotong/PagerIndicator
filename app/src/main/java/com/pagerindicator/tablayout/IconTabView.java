@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -97,7 +98,7 @@ public class IconTabView extends LinearLayout implements ITabView {
 
     @Override
     public void onSelected(int index) {
-//        icon.setImageResource(R.mipmap.ic_tab_selected);
+        icon.setImageResource(R.mipmap.ic_tab_selected);
 //        text.setTextColor(mSelectedColor);
         setSelected(true);
     }
