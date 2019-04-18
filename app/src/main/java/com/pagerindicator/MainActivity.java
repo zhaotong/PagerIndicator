@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int cur = viewPager.getCurrentItem();
                 int count = viewPager.getAdapter().getCount();
-                if (cur + 1 < count - 1) {
+                if (cur + 1 < count ) {
                     viewPager.setCurrentItem(cur + 1);
                 } else {
                     viewPager.setCurrentItem(0);

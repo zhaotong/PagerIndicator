@@ -40,6 +40,8 @@ public class TabLayout extends HorizontalScrollView {
     private int mode = MODE_SCROLLABLE;
     private int tabMargin;
 
+    private OnTabSelectedListener onTabSelectedListener;
+
 
     private DataSetObserver dataSetObserver = new DataSetObserver() {
         @Override
@@ -144,6 +146,7 @@ public class TabLayout extends HorizontalScrollView {
             mViewPager = viewPager;
             if (onPageChangeListener == null)
                 onPageChangeListener = new TabLayoutOnPageChangeListener();
+            onPageChangeListener.clear();
             mViewPager.addOnPageChangeListener(onPageChangeListener);
         }
         if (adapter != null)
@@ -159,6 +162,9 @@ public class TabLayout extends HorizontalScrollView {
 
 
     private void populate() {
+        if (onPageChangeListener != null)
+            onPageChangeListener.clear();
+
         if (mTabContainer != null) {
             mTabContainer.removeAllViews();
             //添加title
@@ -243,6 +249,14 @@ public class TabLayout extends HorizontalScrollView {
         private int mLastPosition;
         private ITabView selectedTabView;
 
+        public void clear() {
+            mLastPositionOffsetSum = 0f;
+            mScrollState = ViewPager.SCROLL_STATE_IDLE;
+            mScrollStartX = 0.5f;//启动滑动因子，默认到达中心开始滑动
+            mLastPosition = 0;
+            selectedTabView = null;
+        }
+
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -312,6 +326,14 @@ public class TabLayout extends HorizontalScrollView {
                         if (position == i) {
                             tabView.onScrolled(i, 0, ITabView.ORIENTATION_LEFT);
                             tabView.onSelected(i);
+
+                            if (onTabSelectedListener != null) {
+                                onTabSelectedListener.onTabSelected(position);
+                                if (selectedTabView != null) {
+                                    onTabSelectedListener.onTabUnselected(mLastPosition);
+                                }
+                            }
+
                             selectedTabView = tabView;
                         } else {
                             tabView.onScrolled(i, 1f, ITabView.ORIENTATION_LEFT);
@@ -329,6 +351,19 @@ public class TabLayout extends HorizontalScrollView {
         public void onPageScrollStateChanged(int state) {
             mScrollState = state;
         }
+    }
+
+
+    public void setOnTabSelectedListener(OnTabSelectedListener onTabSelectedListener) {
+        this.onTabSelectedListener = onTabSelectedListener;
+    }
+
+    public interface OnTabSelectedListener {
+
+        public void onTabSelected(int position);
+
+        public void onTabUnselected(int position);
+
     }
 
 }
