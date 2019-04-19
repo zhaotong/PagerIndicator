@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TabLayout">
+
+        <attr name="tabContentStart" format="dimension" />
+        <attr name="tabContentEnd" format="dimension" />
+
+        <attr name="tabBackground" format="reference" />
+
+        <attr name="tabIndicatorColor" format="color" />
+        <attr name="tabIndicatorHeight" format="dimension" />
+        <attr name="tabIndicatorWidth" format="dimension" />
+
+        <attr name="tabIndicatorRoundHorizontal" format="dimension" />
+        <attr name="tabIndicatorRoundVertical" format="dimension" />
+
+        <attr name="tabIndicator" format="reference" />
+        <attr name="tabIndicatorGravity">
+
+            <enum name="bottom" value="0" />
+
+            <enum name="top" value="1" />
+
+        </attr>
+        <attr name="tabMode">
+            <enum name="scrollable" value="0" />
+            <enum name="fixed" value="1" />
+        </attr>
+
+        <attr name="tabIndicatorMode">
+            <enum name="round" value="1" />
+            <enum name="line" value="0" />
+        </attr>
+
+
+
+        <attr name="tabTextAppearance" format="reference" />
+        <attr name="tabTextColor" format="color" />
+        <attr name="tabSelectedTextColor" format="color" />
+
+        <attr name="tabPaddingStart" format="dimension" />
+        <attr name="tabPaddingTop" format="dimension" />
+        <attr name="tabPaddingEnd" format="dimension" />
+        <attr name="tabPaddingBottom" format="dimension" />
+        <attr name="tabPadding" format="dimension" />
+
+
+    </declare-styleable>
+
+</resources>

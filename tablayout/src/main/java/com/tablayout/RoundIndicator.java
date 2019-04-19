@@ -1,4 +1,4 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -70,10 +70,9 @@ public class RoundIndicator extends View implements ITabIndicator {
         if (useShadow) {
             //关闭硬件加速 绘制阴影
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            paint.setShadowLayer(30, 0, 10, Color.parseColor("#FFA35065"));
+            paint.setShadowLayer(30, 0, 15, Color.parseColor("#FFA35065"));
         }
         canvas.drawRoundRect(rect, mRoundRadius, mRoundRadius, paint);
-
     }
 
     private int dpToPx(int dps) {

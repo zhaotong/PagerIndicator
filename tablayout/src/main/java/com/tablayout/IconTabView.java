@@ -1,20 +1,16 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.pagerindicator.R;
 
 /**
  * Author: tone
@@ -98,15 +94,12 @@ public class IconTabView extends LinearLayout implements ITabView {
 
     @Override
     public void onSelected(int index) {
-        icon.setImageResource(R.mipmap.ic_tab_selected);
-//        text.setTextColor(mSelectedColor);
+
         setSelected(true);
     }
 
     @Override
     public void onUnselected(int index) {
-        icon.setImageResource(R.mipmap.ic_tab_unselected);
-//        text.setTextColor(mNormalColor);
         setSelected(false);
     }
 
@@ -159,7 +152,7 @@ public class IconTabView extends LinearLayout implements ITabView {
         setScaleX(1.0f + (mMinScale - 1.0f) * positionOffset);
         int color = ArgbEvaluator.evaluator(positionOffset, mSelectedColor, mNormalColor);
         text.setTextColor(color);
-        icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+//        icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
     }
 

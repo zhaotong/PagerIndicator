@@ -1,4 +1,4 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-
-import com.pagerindicator.R;
 
 /**
  * Author: tone
@@ -68,8 +66,10 @@ public class LineIndicator extends View implements ITabIndicator {
             colors = new int[]{colorAccent};
         } else
             colors = new int[]{Color.parseColor("#FFFF6447"), Color.parseColor("#FFFF2B67")};
+
         widthMode = WIDTH_MODE_WRAP;
-        mIndicatorHeight = dpToPx(4);
+
+        mIndicatorHeight = dpToPx(3);
         mIndicatorWidth = dpToPx(24);
         mRoundRadius = mIndicatorHeight / 2;
 
@@ -217,5 +217,10 @@ public class LineIndicator extends View implements ITabIndicator {
     public void setRoundRadius(float mRoundRadius) {
         this.mRoundRadius = mRoundRadius;
         postInvalidate();
+    }
+
+
+    public void setGravity(int gravity) {
+        this.gravity = gravity;
     }
 }

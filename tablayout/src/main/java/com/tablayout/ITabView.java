@@ -1,4 +1,4 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 
 public interface ITabView {
@@ -10,7 +10,7 @@ public interface ITabView {
 
     void onUnselected(int index);
 
-    //positionOffset>0 leftToRight
+
     void onScrolled(int position, float positionOffset, int orientation);
 
     int getContentLeft();

@@ -1,4 +1,4 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 public interface ITabIndicator {
 

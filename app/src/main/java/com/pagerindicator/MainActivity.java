@@ -14,14 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.pagerindicator.tablayout.ArgbEvaluator;
-import com.pagerindicator.tablayout.DefaultTabView;
-import com.pagerindicator.tablayout.ITabIndicator;
-import com.pagerindicator.tablayout.ITabView;
-import com.pagerindicator.tablayout.IconTabView;
-import com.pagerindicator.tablayout.LineIndicator;
-import com.pagerindicator.tablayout.TabAdapter;
-import com.pagerindicator.tablayout.TabLayout;
+import com.tablayout.ArgbEvaluator;
+import com.tablayout.DefaultTabView;
+import com.tablayout.ITabIndicator;
+import com.tablayout.ITabView;
+import com.tablayout.IconTabView;
+import com.tablayout.LineIndicator;
+import com.tablayout.RoundIndicator;
+import com.tablayout.TabAdapter;
+import com.tablayout.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -91,32 +92,39 @@ public class MainActivity extends AppCompatActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.setAdapter(new TabAdapter() {
-            @Override
-            public int getCount() {
-                return mPagerAdapter != null ? mPagerAdapter.getCount() : 0;
-            }
 
-            @Override
-            public ITabView getTabView(Context context, int index) {
-                DefaultTabView tabView = new DefaultTabView(context);
-                tabView.setText(mPagerAdapter.getPageTitle(index));
-                return tabView;
-            }
+        android.support.design.widget.TabLayout tabLayout2 = findViewById(R.id.tabLayout2);
 
-            @Override
-            public ITabIndicator getIndicator(Context context) {
-                LineIndicator indicator=new LineIndicator(context);
-
-
-
-                indicator.setWidthMode(LineIndicator.WIDTH_MODE_CUSTOM);
-                indicator.setIndicatorWidth(dpToPx(18));
-
-
-                return indicator;
-            }
-        });
+        tabLayout2.setupWithViewPager(viewPager);
+//        tabLayout.setAdapter(new TabAdapter() {
+//            @Override
+//            public int getCount() {
+//                return mPagerAdapter != null ? mPagerAdapter.getCount() : 0;
+//            }
+//
+//            @Override
+//            public ITabView getTabView(Context context, int index) {
+//                DefaultTabView tabView = new DefaultTabView(context);
+////                IconTabView tabView = new IconTabView(context);
+//
+//                tabView.setText(mPagerAdapter.getPageTitle(index));
+//                return tabView;
+//            }
+//
+//            @Override
+//            public ITabIndicator getIndicator(Context context) {
+//                LineIndicator indicator=new LineIndicator(context);
+//
+//
+//
+////                indicator.setWidthMode(LineIndicator.WIDTH_MODE_CUSTOM);
+////                indicator.setIndicatorWidth(dpToPx(18));
+//
+//
+////                RoundIndicator indicator1 =new RoundIndicator(context);
+//                return indicator;
+//            }
+//        });
 
 
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {

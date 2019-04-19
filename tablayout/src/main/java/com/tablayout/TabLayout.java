@@ -1,12 +1,16 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.TextViewCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +32,25 @@ public class TabLayout extends HorizontalScrollView {
     private static final int TAB_MIN_WIDTH_MARGIN = 6; //dps
 
 
+    private int mTabPaddingStart;
+    private int mTabPaddingTop;
+    private int mTabPaddingEnd;
+    private int mTabPaddingBottom;
+
+    private int mTabContentStart;
+    private int mTabContentEnd;
+
+    private int mIndicatorHeight;
+    private int mIndicatorWidth;
+    private int mIndicatorColor;
+    private int mIndicatorGravity;
+
+    private int mTabTextSize;
+    private ColorStateList mTabTextColors;
+    private int mTabTextAppearance;
+
+    private int tabBackgroundResId;
+
     private int tabWidth;
 
     private LinearLayout mTabContainer;
@@ -37,7 +60,7 @@ public class TabLayout extends HorizontalScrollView {
     private ViewPager mViewPager;
     private TabLayoutOnPageChangeListener onPageChangeListener;
 
-    private int mode = MODE_SCROLLABLE;
+    private int mMode = MODE_SCROLLABLE;
     private int tabMargin;
 
     private OnTabSelectedListener onTabSelectedListener;
@@ -67,6 +90,62 @@ public class TabLayout extends HorizontalScrollView {
     public TabLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        setHorizontalScrollBarEnabled(false);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TabLayout, defStyleAttr, 0);
+
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorAccent, typedValue, true);
+        int colorAccent = typedValue.data;
+
+        mIndicatorHeight = a.getDimensionPixelSize(R.styleable.TabLayout_tabIndicatorHeight, dpToPx(4));
+        mIndicatorWidth = a.getDimensionPixelSize(R.styleable.TabLayout_tabIndicatorWidth, 0);
+        mIndicatorColor = a.getColor(R.styleable.TabLayout_tabIndicatorColor, colorAccent);
+
+        mTabContentStart = a.getDimensionPixelSize(R.styleable.TabLayout_tabContentStart, 0);
+        mTabContentEnd = a.getDimensionPixelSize(R.styleable.TabLayout_tabContentEnd, 0);
+
+        mTabPaddingStart = mTabPaddingTop = mTabPaddingEnd = mTabPaddingBottom = a.getDimensionPixelSize(R.styleable.TabLayout_tabPadding, 0);
+        mTabPaddingStart = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingStart, dpToPx(18));
+        mTabPaddingTop = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingTop, dpToPx(6));
+        mTabPaddingEnd = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingEnd, dpToPx(18));
+        mTabPaddingBottom = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingBottom, dpToPx(6));
+
+        mTabTextAppearance = a.getResourceId(R.styleable.TabLayout_tabTextAppearance, R.style.TextAppearance_Design_Tab);
+
+        // Text colors/sizes come from the text appearance first
+        final TypedArray ta = context.obtainStyledAttributes(mTabTextAppearance, android.support.v7.appcompat.R.styleable.TextAppearance);
+        try {
+            mTabTextSize = ta.getDimensionPixelSize(android.support.v7.appcompat.R.styleable.TextAppearance_android_textSize, 0);
+            mTabTextColors = ta.getColorStateList(android.support.v7.appcompat.R.styleable.TextAppearance_android_textColor);
+        } finally {
+            ta.recycle();
+        }
+
+        if (a.hasValue(R.styleable.TabLayout_tabTextColor)) {
+            // If we have an explicit text color set, use it instead
+            mTabTextColors = a.getColorStateList(R.styleable.TabLayout_tabTextColor);
+        }
+
+        if (a.hasValue(R.styleable.TabLayout_tabSelectedTextColor)) {
+            // We have an explicit selected text color set, so we need to make merge it with the
+            // current colors. This is exposed so that developers can use theme attributes to set
+            // this (theme attrs in ColorStateLists are Lollipop+)
+            final int selected = a.getColor(R.styleable.TabLayout_tabSelectedTextColor, colorAccent);
+            mTabTextColors = createColorStateList(mTabTextColors.getDefaultColor(), selected);
+        }
+
+        tabBackgroundResId = a.getResourceId(R.styleable.TabLayout_tabBackground, 0);
+
+        if (tabBackgroundResId != 0) {
+            setBackgroundResource(tabBackgroundResId);
+        }
+
+        mIndicatorGravity = a.getInt(R.styleable.TabLayout_tabIndicatorGravity, 0);
+
+        mMode = a.getInt(R.styleable.TabLayout_tabMode, 0);
+
+        a.recycle();
+
         initView(context);
         tabMargin = 0;
     }
@@ -86,7 +165,7 @@ public class TabLayout extends HorizontalScrollView {
 
         //添加指示器
         mIndicator = adapter.getIndicator(getContext());
-        if (mIndicator instanceof View) {
+        if (mIndicator != null) {
             frameLayout.addView((View) mIndicator, params);
         }
 
@@ -124,7 +203,7 @@ public class TabLayout extends HorizontalScrollView {
 
         if (getChildCount() > 0) {
             View child = getChildAt(0);
-            if (child.getMeasuredWidth() != getMeasuredWidth() && mode == MODE_FIXED) {
+            if (child.getMeasuredWidth() != getMeasuredWidth() && mMode == MODE_FIXED) {
                 int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, getPaddingTop() + getPaddingBottom(), child.getLayoutParams().height);
                 int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.EXACTLY);
                 child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
@@ -167,13 +246,14 @@ public class TabLayout extends HorizontalScrollView {
 
         if (mTabContainer != null) {
             mTabContainer.removeAllViews();
+            mTabContainer.setPadding(mTabContentStart, 0, mTabContentEnd, 0);
             //添加title
             int count = adapter.getCount();
             LinearLayout.LayoutParams tabParams;
             for (int i = 0; i < count; i++) {
                 ITabView view = adapter.getTabView(getContext(), i);
                 if (view instanceof View) {
-                    if (mode == MODE_FIXED) {
+                    if (mMode == MODE_FIXED) {
                         tabParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
                         tabParams.weight = 1;
                         tabParams.gravity = Gravity.CENTER_VERTICAL;
@@ -204,13 +284,13 @@ public class TabLayout extends HorizontalScrollView {
     }
 
 
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setMode(int mMode) {
+        this.mMode = mMode;
         applyMode();
     }
 
     private void applyMode() {
-        switch (mode) {
+        switch (mMode) {
             case MODE_FIXED:
                 mTabContainer.setGravity(Gravity.CENTER_HORIZONTAL);
                 break;
@@ -232,7 +312,7 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     private void updateTabViewLayoutParams(LinearLayout.LayoutParams lp) {
-        if (mode == MODE_FIXED) {
+        if (mMode == MODE_FIXED) {
             lp.width = 0;
             lp.weight = 1;
         } else {
@@ -366,4 +446,66 @@ public class TabLayout extends HorizontalScrollView {
 
     }
 
+
+    public void setTextColors(ColorStateList mTabTextColors) {
+        this.mTabTextColors = mTabTextColors;
+        notifyDataSetChanged();
+    }
+
+    public void setTextColors(int defaultColor, int selectedColor) {
+        this.mTabTextColors = createColorStateList(defaultColor, selectedColor);
+        notifyDataSetChanged();
+    }
+
+
+    private static ColorStateList createColorStateList(int defaultColor, int selectedColor) {
+        final int[][] states = new int[2][];
+        final int[] colors = new int[2];
+        int i = 0;
+
+        states[i] = SELECTED_STATE_SET;
+        colors[i] = selectedColor;
+        i++;
+
+        // Default enabled state
+        states[i] = EMPTY_STATE_SET;
+        colors[i] = defaultColor;
+        i++;
+
+        return new ColorStateList(states, colors);
+    }
+
+
+    class DefaultAdapter extends TabAdapter {
+
+        @Override
+        public int getCount() {
+            return mPagerAdapter != null ? mPagerAdapter.getCount() : 0;
+        }
+
+        @Override
+        public ITabView getTabView(Context context, int index) {
+            DefaultTabView tabView = new DefaultTabView(context);
+            tabView.setPadding(mTabPaddingStart, mTabPaddingTop, mTabPaddingEnd, mTabPaddingBottom);
+            tabView.setText(mPagerAdapter.getPageTitle(index));
+            tabView.setTextColor(mTabTextColors);
+            tabView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTabTextSize);
+            TextViewCompat.setTextAppearance(tabView, mTabTextAppearance);
+
+            return tabView;
+        }
+
+        @Override
+        public ITabIndicator getIndicator(Context context) {
+            LineIndicator indicator = new LineIndicator(context);
+            indicator.setColor(new int[]{mIndicatorColor});
+            indicator.setGravity(mIndicatorGravity);
+            indicator.setIndicatorHeight(mIndicatorHeight);
+            if (mIndicatorWidth > 0) {
+                indicator.setWidthMode(LineIndicator.WIDTH_MODE_CUSTOM);
+                indicator.setIndicatorWidth(mIndicatorWidth);
+            }
+            return indicator;
+        }
+    }
 }

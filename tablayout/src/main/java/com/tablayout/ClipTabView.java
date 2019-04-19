@@ -1,4 +1,4 @@
-package com.pagerindicator.tablayout;
+package com.tablayout;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
