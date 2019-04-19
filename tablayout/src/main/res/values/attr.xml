@@ -16,11 +16,8 @@
 
         <attr name="tabIndicator" format="reference" />
         <attr name="tabIndicatorGravity">
-
             <enum name="bottom" value="0" />
-
             <enum name="top" value="1" />
-
         </attr>
         <attr name="tabMode">
             <enum name="scrollable" value="0" />
@@ -33,6 +30,7 @@
         </attr>
 
 
+        <attr name="tabMinWidth" format="dimension" />
 
         <attr name="tabTextAppearance" format="reference" />
         <attr name="tabTextColor" format="color" />

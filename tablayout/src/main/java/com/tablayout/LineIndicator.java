@@ -67,7 +67,7 @@ public class LineIndicator extends View implements ITabIndicator {
         } else
             colors = new int[]{Color.parseColor("#FFFF6447"), Color.parseColor("#FFFF2B67")};
 
-        widthMode = WIDTH_MODE_WRAP;
+        widthMode = WIDTH_MODE_MATCH;
 
         mIndicatorHeight = dpToPx(3);
         mIndicatorWidth = dpToPx(24);
@@ -83,6 +83,8 @@ public class LineIndicator extends View implements ITabIndicator {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (mIndicatorHeight == 0)
+            return;
         canvas.drawRoundRect(rect, mRoundRadius, mRoundRadius, paint);
 
     }
@@ -111,6 +113,8 @@ public class LineIndicator extends View implements ITabIndicator {
         if (curView == null || nextView == null)
             return;
 
+        if (mIndicatorHeight == 0)
+            return;
 
         float leftX;
         float nextLeftX;

@@ -39,6 +39,7 @@ public class TabLayout extends HorizontalScrollView {
 
     private int mTabContentStart;
     private int mTabContentEnd;
+    private int mTabMinWidth;
 
     private int mIndicatorHeight;
     private int mIndicatorWidth;
@@ -97,7 +98,7 @@ public class TabLayout extends HorizontalScrollView {
         context.getTheme().resolveAttribute(R.attr.colorAccent, typedValue, true);
         int colorAccent = typedValue.data;
 
-        mIndicatorHeight = a.getDimensionPixelSize(R.styleable.TabLayout_tabIndicatorHeight, dpToPx(4));
+        mIndicatorHeight = a.getDimensionPixelSize(R.styleable.TabLayout_tabIndicatorHeight, dpToPx(2));
         mIndicatorWidth = a.getDimensionPixelSize(R.styleable.TabLayout_tabIndicatorWidth, 0);
         mIndicatorColor = a.getColor(R.styleable.TabLayout_tabIndicatorColor, colorAccent);
 
@@ -109,6 +110,8 @@ public class TabLayout extends HorizontalScrollView {
         mTabPaddingTop = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingTop, dpToPx(6));
         mTabPaddingEnd = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingEnd, dpToPx(18));
         mTabPaddingBottom = a.getDimensionPixelSize(R.styleable.TabLayout_tabPaddingBottom, dpToPx(6));
+
+        mTabMinWidth = a.getDimensionPixelSize(R.styleable.TabLayout_tabMinWidth, -1);
 
         mTabTextAppearance = a.getResourceId(R.styleable.TabLayout_tabTextAppearance, R.style.TextAppearance_Design_Tab);
 
@@ -490,6 +493,7 @@ public class TabLayout extends HorizontalScrollView {
             tabView.setText(mPagerAdapter.getPageTitle(index));
             tabView.setTextColor(mTabTextColors);
             tabView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTabTextSize);
+            tabView.setMinimumWidth(getTabMinWidth());
             TextViewCompat.setTextAppearance(tabView, mTabTextAppearance);
 
             return tabView;
@@ -506,6 +510,14 @@ public class TabLayout extends HorizontalScrollView {
                 indicator.setIndicatorWidth(mIndicatorWidth);
             }
             return indicator;
+        }
+    }
+
+    private int getTabMinWidth() {
+        if (this.mTabMinWidth != -1) {
+            return this.mTabMinWidth;
+        } else {
+            return this.mMode == MODE_SCROLLABLE ? dpToPx(72) : 0;
         }
     }
 }

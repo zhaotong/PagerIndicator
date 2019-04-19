@@ -1,7 +1,6 @@
 package com.pagerindicator;
 
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,18 +14,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tablayout.ArgbEvaluator;
-import com.tablayout.DefaultTabView;
-import com.tablayout.ITabIndicator;
-import com.tablayout.ITabView;
-import com.tablayout.IconTabView;
-import com.tablayout.LineIndicator;
-import com.tablayout.RoundIndicator;
-import com.tablayout.TabAdapter;
 import com.tablayout.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String[] channels = new String[]{"HONEYCOMB", "ICE_CREAM_SANDWICH", "JELLY_BEAN", "KITKAT", "LOLLIPOP", "M", "NOUGAT"};
+    private String[] channels = new String[]{ "M", "NOUGAT"};
 
 
     TabLayout tabLayout;
