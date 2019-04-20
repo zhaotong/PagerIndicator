@@ -33,6 +33,8 @@
         android:layout_gravity="bottom"
         android:id="@+id/tabLayout2"
         app:tabMode="scrollable"
+        app:tabIndicatorHeight="40dp"
+        app:tabIndicatorGravity="stretch"
         app:tabTextAppearance="@style/TabLayoutTextAppearance"
         android:layout_width="match_parent"
         android:layout_height="48dp"/>

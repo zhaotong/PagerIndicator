@@ -137,8 +137,8 @@ public class LineIndicator extends View implements ITabIndicator {
 
             leftX = curView.getLeft() + (curView.getWidth() - mIndicatorWidth) / 2;
             nextLeftX = nextView.getLeft() + (nextView.getWidth() - mIndicatorWidth) / 2;
-            rightX = curView.getLeft() + (curView.getWidth() + mIndicatorWidth) / 2;
-            nextRightX = nextView.getLeft() + (nextView.getWidth() + mIndicatorWidth) / 2;
+            rightX = leftX + mIndicatorWidth;
+            nextRightX = nextLeftX + mIndicatorWidth;
         }
 
         rect.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
